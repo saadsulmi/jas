@@ -82,6 +82,23 @@
     z-index:0;
   }
 
+  .moon{
+    position:absolute;
+    top:max(1.75rem, calc(env(safe-area-inset-top, 0px) + 1.25rem));
+    right:1.75rem;
+    width:clamp(52px, 11vw, 92px);
+    aspect-ratio:1;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 30% 24%, rgba(203,187,140,0.55) 0%, transparent 9%),
+      radial-gradient(circle at 62% 52%, rgba(203,187,140,0.45) 0%, transparent 11%),
+      radial-gradient(circle at 42% 68%, rgba(203,187,140,0.4) 0%, transparent 8%),
+      radial-gradient(circle at 68% 30%, #fffbea 0%, #f3e8c4 45%, #d9c896 100%);
+    box-shadow:
+      0 0 34px 10px rgba(247,236,200,0.35),
+      0 0 80px 26px rgba(247,236,200,0.15);
+  }
+
   .star{
     position:absolute;
     background:var(--star);
@@ -93,6 +110,12 @@
     .star{ animation:twinkle 4s ease-in-out infinite; }
     .firefly{ animation-name:drift; animation-timing-function:ease-in-out; animation-iteration-count:infinite; }
     .lantern{ animation:lantern-rise var(--dur, 9s) linear infinite; animation-delay:var(--delay, 0s); }
+    .moon{ animation:moon-glow 6s ease-in-out infinite; }
+  }
+
+  @keyframes moon-glow{
+    0%, 100%{ filter:brightness(1); }
+    50%{ filter:brightness(1.1); }
   }
 
   @keyframes twinkle{
@@ -346,6 +369,29 @@
     overflow:hidden;
   }
 
+  .frame img{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:0;
+  }
+
+  .frame::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,0.6) 100%);
+    z-index:1;
+    pointer-events:none;
+  }
+
+  .frame span, .frame svg{
+    position:relative;
+    z-index:2;
+  }
+
   .frame:nth-child(1){ grid-column:span 2; grid-row:span 2; transform:rotate(-1deg); }
   .frame:nth-child(2){ grid-column:span 2; transform:rotate(1deg); }
   .frame:nth-child(3){ grid-column:span 1; transform:rotate(-2deg); }
@@ -527,7 +573,7 @@
 <body>
 
 <section class="hero" id="hero">
-  <div class="sky" id="sky"></div>
+  <div class="sky" id="sky"><div class="moon"></div></div>
   <div class="hero-inner">
     <h1 class="hero-title">For my <span class="name" id="heroName">[Her Name]</span></h1>
     <p class="hero-tagline" id="heroTagline"></p>
@@ -639,13 +685,16 @@ const content = {
     "How ordinary rooms feel different because you're standing in them."
   ],
 
+  // Each entry can have a "src" (a photo URL, or a local filename sitting
+  // next to this HTML file, e.g. "photos/kochi.jpg"). Leave src empty and
+  // it'll show a placeholder frame with just the caption.
   gallery: [
-    "That trip we almost cancelled",
-    "Our first apartment",
-    "A rainy Sunday, doing nothing",
-    "The day everything became official",
-    "Pancakes, most Sundays",
-    "Just because"
+    { caption: "That trip we almost cancelled", src: "./1000257229.jpg" },
+    { caption: "Our first date", src: "./1000209350.jpg" },
+    { caption: "A Boquet for my princess", src: "./1000212989.jpg" },
+    { caption: "The day everything became official", src: "./1000255439.png" },
+    { caption: "My pretty rowdy", src: "./1000243074.jpg" },
+    { caption: "Just because", src: "./1000254992.png" }
   ],
 
   letter: [
@@ -796,10 +845,21 @@ renderStack();
 /* ---------- gallery frames ---------- */
 const framesEl = document.getElementById('frames');
 const camIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.2"/></svg>';
-content.gallery.forEach(caption=>{
+content.gallery.forEach(item=>{
   const div = document.createElement('div');
   div.className = 'frame';
-  div.innerHTML = camIcon + '<span>'+caption+'</span>';
+  if(item.src){
+    const img = document.createElement('img');
+    img.src = item.src;
+    img.alt = item.caption || '';
+    div.appendChild(img);
+  }
+  const span = document.createElement('span');
+  span.textContent = item.caption || '';
+  if(!item.src){
+    div.innerHTML = camIcon;
+  }
+  div.appendChild(span);
   framesEl.appendChild(div);
 });
 
