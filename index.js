@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>For My Love</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #12162b;
+    --ink-2: #1c2340;
+    --ink-3: #262e50;
+    --paper: #f6efe2;
+    --paper-2: #eee1c9;
+    --gold: #cda45e;
+    --rose: #d98d97;
+    --wine: #6f2439;
+    --star: #f4ecd8;
+    --ink-text: #2a2320;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink-text);
+    font-family:'Jost', sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+  }
+
+  h1,h2,h3, .display{
+    font-family:'Fraunces', serif;
+    margin:0;
+    font-weight:500;
+  }
+
+  section{
+    padding:7rem 1.5rem;
+    max-width:760px;
+    margin:0 auto;
+  }
+
+  .section-heading{
+    font-size:clamp(1.8rem, 4vw, 2.6rem);
+    font-style:italic;
+    font-weight:400;
+    text-align:center;
+    color:var(--ink);
+    margin-bottom:3.5rem;
+    letter-spacing:0.01em;
+  }
+
+  a, button{ font-family:inherit; }
+
+  :focus-visible{
+    outline:2px solid var(--wine);
+    outline-offset:4px;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    min-height:100svh;
+    max-width:none;
+    padding:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:radial-gradient(ellipse at 50% 20%, var(--ink-3) 0%, var(--ink) 55%, #0c0f1e 100%);
+    overflow:hidden;
+  }
+
+  .sky{
+    position:absolute;
+    inset:0;
+    z-index:0;
+  }
+
+  .star{
+    position:absolute;
+    background:var(--star);
+    border-radius:50%;
+    opacity:0.5;
+  }
+
+  @media (prefers-reduced-motion: no-preference){
+    .star{ animation:twinkle 4s ease-in-out infinite; }
+    .firefly{ animation-name:drift; animation-timing-function:ease-in-out; animation-iteration-count:infinite; }
+  }
+
+  @keyframes twinkle{
+    0%, 100%{ opacity:0.15; }
+    50%{ opacity:0.9; }
+  }
+
+  .firefly{
+    position:absolute;
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:var(--rose);
+    box-shadow:0 0 8px 2px rgba(217,141,151,0.8);
+    opacity:0.7;
+  }
+
+  @keyframes drift{
+    0%{ transform:translate(0,0); opacity:0.2; }
+    50%{ opacity:0.85; }
+    100%{ transform:translate(var(--dx), var(--dy)); opacity:0.1; }
+  }
+
+  .hero-inner{
+    position:relative;
+    z-index:1;
+    text-align:center;
+    padding:max(1.5rem, env(safe-area-inset-top)) 1.5rem 1.5rem;
+    color:var(--star);
+    opacity:0;
+    transform:translateY(14px);
+    animation:rise 1.6s ease-out 0.3s forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .hero-inner{ opacity:1; transform:none; animation:none; }
+  }
+
+  @keyframes rise{
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .hero-title{
+    font-size:clamp(2rem, 8vw, 4rem);
+    font-weight:400;
+    line-height:1.15;
+  }
+
+  .hero-title .name{
+    font-style:italic;
+    font-weight:500;
+    color:var(--gold);
+    display:inline-block;
+  }
+
+  .hero-tagline{
+    margin-top:1.4rem;
+    font-size:clamp(1rem, 2vw, 1.15rem);
+    font-weight:300;
+    letter-spacing:0.02em;
+    color:var(--paper-2);
+    max-width:34ch;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  .hero-counter{
+    margin-top:2.6rem;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:clamp(1rem, 2.4vw, 1.3rem);
+    color:var(--rose);
+    min-height:1.6em;
+  }
+
+  .hero-counter strong{
+    font-weight:600;
+    font-style:normal;
+    color:var(--star);
+  }
+
+  .scroll-hint{
+    position:absolute;
+    bottom:calc(2.4rem + env(safe-area-inset-bottom, 0px));
+    left:50%;
+    transform:translateX(-50%);
+    z-index:1;
+    color:var(--paper-2);
+    font-size:0.72rem;
+    letter-spacing:0.28em;
+    opacity:0.6;
+  }
+
+  .scroll-hint::after{
+    content:"";
+    display:block;
+    width:1px;
+    height:28px;
+    background:var(--paper-2);
+    margin:0.6rem auto 0;
+    opacity:0.6;
+  }
+
+  /* ---------- STORY / TIMELINE ---------- */
+  .story{ background:var(--paper); }
+
+  .timeline{
+    position:relative;
+    padding-left:0;
+  }
+
+  .timeline::before{
+    content:"";
+    position:absolute;
+    left:20px;
+    top:6px;
+    bottom:6px;
+    width:1px;
+    background:linear-gradient(var(--gold), var(--wine));
+    opacity:0.5;
+  }
+
+  @media (min-width:680px){
+    .timeline::before{ left:50%; transform:translateX(-50%); }
+  }
+
+  .t-item{
+    position:relative;
+    padding-left:52px;
+    margin-bottom:3.2rem;
+    opacity:0;
+    transform:translateY(10px);
+    transition:opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .t-item.in-view{ opacity:1; transform:translateY(0); }
+
+  .t-item::before{
+    content:"";
+    position:absolute;
+    left:14px;
+    top:6px;
+    width:13px;
+    height:13px;
+    border-radius:50%;
+    background:var(--paper);
+    border:2px solid var(--wine);
+  }
+
+  @media (min-width:680px){
+    .t-item{ width:46%; padding-left:0; padding-right:0; }
+    .t-item::before{ left:auto; }
+    .t-item:nth-child(odd){ margin-left:0; text-align:right; padding-right:40px; }
+    .t-item:nth-child(odd)::before{ right:-46px; left:auto; }
+    .t-item:nth-child(even){ margin-left:54%; text-align:left; padding-left:40px; }
+    .t-item:nth-child(even)::before{ left:-46px; }
+  }
+
+  .t-year{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    color:var(--wine);
+    font-size:1rem;
+    display:block;
+    margin-bottom:0.3rem;
+  }
+
+  .t-title{
+    font-size:1.3rem;
+    margin-bottom:0.5rem;
+    color:var(--ink);
+  }
+
+  .t-text{
+    font-size:0.98rem;
+    line-height:1.65;
+    color:#4a4038;
+  }
+
+  /* ---------- REASONS ---------- */
+  .reasons{ background:var(--paper); text-align:center; }
+
+  .card-stack{
+    position:relative;
+    height:220px;
+    max-width:420px;
+    margin:0 auto 2.2rem;
+  }
+
+  .r-card{
+    position:absolute;
+    inset:0;
+    background:#fffdf8;
+    border:1px solid rgba(0,0,0,0.06);
+    border-radius:3px;
+    box-shadow:0 10px 30px rgba(20,15,10,0.14);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:2rem 1.8rem;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:1.25rem;
+    color:var(--ink);
+    line-height:1.5;
+    transition:transform 0.55s cubic-bezier(.2,.7,.3,1), opacity 0.55s ease;
+    cursor:pointer;
+  }
+
+  .next-btn{
+    background:none;
+    border:1px solid var(--wine);
+    color:var(--wine);
+    padding:0.75rem 1.7rem;
+    border-radius:999px;
+    font-size:0.85rem;
+    letter-spacing:0.03em;
+    cursor:pointer;
+    transition:background 0.25s ease, color 0.25s ease;
+  }
+
+  .next-btn:hover{ background:var(--wine); color:var(--paper); }
+
+  .reason-count{
+    margin-top:0.8rem;
+    font-size:0.78rem;
+    color:#8a7f74;
+    letter-spacing:0.05em;
+  }
+
+  /* ---------- GALLERY ---------- */
+  .gallery{ max-width:900px; background:var(--paper); }
+
+  .frames{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    grid-auto-rows:120px;
+    gap:14px;
+  }
+
+  .frame{
+    position:relative;
+    border-radius:2px;
+    background:linear-gradient(135deg, var(--ink-3), var(--wine));
+    display:flex;
+    align-items:flex-end;
+    padding:0.7rem;
+    color:var(--paper-2);
+    font-size:0.78rem;
+    box-shadow:0 8px 18px rgba(20,15,10,0.18);
+    overflow:hidden;
+  }
+
+  .frame:nth-child(1){ grid-column:span 2; grid-row:span 2; transform:rotate(-1deg); }
+  .frame:nth-child(2){ grid-column:span 2; transform:rotate(1deg); }
+  .frame:nth-child(3){ grid-column:span 1; transform:rotate(-2deg); }
+  .frame:nth-child(4){ grid-column:span 1; transform:rotate(2deg); }
+  .frame:nth-child(5){ grid-column:span 2; transform:rotate(-1deg); }
+  .frame:nth-child(6){ grid-column:span 2; grid-row:span 2; transform:rotate(1deg); }
+
+  .frame svg{
+    position:absolute;
+    top:14px; left:14px;
+    width:18px; height:18px;
+    opacity:0.55;
+  }
+
+  @media (max-width:600px){
+    .frames{ grid-template-columns:repeat(2, 1fr); }
+    .frame:nth-child(1), .frame:nth-child(6){ grid-column:span 2; grid-row:span 1; }
+  }
+
+  /* ---------- MOBILE: iPhone 17 Pro (402x874) / Galaxy S23 (360x780) and similar ---------- */
+  @media (max-width:420px){
+    section{ padding:5.5rem 1.25rem; }
+    .section-heading{ margin-bottom:2.8rem; }
+    .card-stack{ height:250px; max-width:100%; }
+    .r-card{ font-size:1.08rem; padding:1.6rem 1.4rem; }
+    .frames{ grid-auto-rows:105px; gap:10px; }
+    .frame{ font-size:0.72rem; padding:0.6rem; }
+    .letter-card{ padding:2.2rem 1.4rem; margin-top:2.2rem; }
+    .letter-card p{ font-size:0.98rem; line-height:1.75; }
+    .seal{ width:66px; height:66px; font-size:1rem; }
+    .t-item{ margin-bottom:2.6rem; }
+  }
+
+  /* ---------- LETTER ---------- */
+  .letter{ text-align:center; }
+
+  .seal{
+    width:74px;
+    height:74px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #8a2e45, var(--wine) 70%);
+    color:var(--paper-2);
+    border:none;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:1.1rem;
+    cursor:pointer;
+    box-shadow:0 6px 16px rgba(111,36,57,0.4), inset 0 0 0 3px rgba(244,236,216,0.15);
+    transition:transform 0.3s ease;
+  }
+
+  .seal:hover{ transform:scale(1.06) rotate(-3deg); }
+
+  .seal-label{
+    margin-top:0.9rem;
+    font-size:0.82rem;
+    color:#8a7f74;
+    letter-spacing:0.04em;
+  }
+
+  .letter-card{
+    margin:2.6rem auto 0;
+    max-width:560px;
+    background:#fffdf8;
+    padding:3rem 2.4rem;
+    text-align:left;
+    box-shadow:0 20px 50px rgba(20,15,10,0.16);
+    transform:scale(0.92) rotate(-1deg);
+    opacity:0;
+    transition:transform 0.6s cubic-bezier(.2,.7,.3,1), opacity 0.6s ease;
+  }
+
+  .letter-card.open{
+    transform:scale(1) rotate(0deg);
+    opacity:1;
+  }
+
+  .letter-card p{
+    font-family:'Fraunces', serif;
+    font-size:1.05rem;
+    line-height:1.85;
+    color:var(--ink-text);
+    margin:0 0 1.2rem;
+  }
+
+  .letter-sign{
+    font-style:italic;
+    color:var(--wine);
+    font-size:1.15rem;
+    margin-top:1.6rem;
+  }
+
+  /* ---------- CLOSING ---------- */
+  .closing{
+    background:var(--ink);
+    color:var(--paper-2);
+    text-align:center;
+    padding:5rem 1.5rem calc(4rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .signature{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:1.6rem;
+    color:var(--gold);
+    margin-bottom:0.6rem;
+  }
+
+  .anniversary, .date-today{
+    font-size:0.85rem;
+    color:#a89e8c;
+    margin:0.3rem 0;
+  }
+</style>
+</head>
+<body>
+
+<section class="hero" id="hero">
+  <div class="sky" id="sky"></div>
+  <div class="hero-inner">
+    <h1 class="hero-title">For my <span class="name" id="heroName">[Her Name]</span></h1>
+    <p class="hero-tagline" id="heroTagline"></p>
+    <p class="hero-counter" id="counter"></p>
+  </div>
+  <div class="scroll-hint">scroll</div>
+</section>
+
+<section class="story" id="story">
+  <h2 class="section-heading">Our story so far</h2>
+  <div class="timeline" id="timeline"></div>
+</section>
+
+<section class="reasons" id="reasons">
+  <h2 class="section-heading">A few reasons, out of many</h2>
+  <div class="card-stack" id="cardStack"></div>
+  <button class="next-btn" id="nextReason" type="button">Another one</button>
+  <p class="reason-count" id="reasonCount"></p>
+</section>
+
+<section class="gallery" id="gallery">
+  <h2 class="section-heading">Our moments</h2>
+  <div class="frames" id="frames"></div>
+</section>
+
+<section class="letter" id="letterSection">
+  <h2 class="section-heading">One more thing</h2>
+  <button class="seal" id="sealBtn" type="button" aria-expanded="false" aria-controls="letterCard">Open</button>
+  <p class="seal-label">a letter, sealed for you</p>
+  <div class="letter-card" id="letterCard"></div>
+</section>
+
+<footer class="closing">
+  <p class="signature" id="signature">[Your Name]</p>
+  <p class="anniversary" id="anniversary"></p>
+</footer>
+
+<script>
+/* =========================================================
+   EDIT EVERYTHING IN THIS CONFIG OBJECT — the whole page
+   rebuilds itself from these values. Nothing else below
+   needs to change.
+   ========================================================= */
+const content = {
+  herName: "Jasna",
+  yourName: "Sulu",
+
+  // The date your story began — powers the live "time together" counter.
+  // Format: "YYYY-MM-DD"
+  sinceDate: "2025-12-15",
+
+  tagline: "Every version of me has loved every version of you.",
+
+  timeline: [
+    {
+      year: "Dec 15, 2025",
+      title: "The first message",
+      text: "We started talking on Instagram. I was too nervous to send the first message, but I finally pulled myself together and sent you an \u2018Assalamualaikum.\u2019 Somehow, you replied. I found out later you weren\u2019t especially religious \u2014 but I still believe it was God\u2019s plan that brought us together. He made us for each other."
+    },
+    {
+      year: "Dec 19, 2025",
+      title: "The first date",
+      text: "You walked out of the canteen and waved at me \u2014 an angel, honestly, I still haven\u2019t forgotten it. I brought you a book, \u2018I Want to Eat Your Pancreas,\u2019 because you\u2019re Type 1 diabetic, though I never said that part out loud \u2014 I didn\u2019t want you to feel offended. I\u2019d also gone looking for a flower shop, but couldn\u2019t find one nearby. You noticed. You told me I hadn\u2019t brought you flowers."
+    },
+    {
+      year: "Dec 20, 2025",
+      title: "The second date",
+      text: "The very next day, I traveled miles away just to find flowers, and finally brought them to you. It was a beautiful day."
+    },
+    {
+      year: "Jan 18, 2026",
+      title: "The engagement",
+      text: "We got engaged. I came to see you with a bunch of lilies."
+    },
+    {
+      year: "Feb 14, 2026",
+      title: "Official",
+      text: "We made it official \u2014 the best day of my life. I was a little tense about it, but you told me it was our day, that we didn\u2019t need to worry about anyone else. Just the two of us. I enjoyed every second of it."
+    },
+    {
+      year: "Apr 30, 2026",
+      title: "Kochi",
+      text: "A small weekend trip \u2014 we met in Kochi. It was a beautiful night. On the way to our meeting point, you sent me a photo from the cab \u2014 the streetlight was falling on your face, and you were glowing. I love you so much. You\u2019re so beautiful. I miss those days."
+    },
+    {
+      year: "May 23, 2026",
+      title: "The wedding",
+      text: "Our marriage function \u2014 the day we stood before everyone and began our life together. From that moment on, it was always going to be the two of us. My swaggy beauty queen, mine forever and always."
+    },
+    {
+      year: "Today",
+      title: "Still",
+      text: "Every day starts with your voice, and that alone gives me the energy to get through the hardest days. There\u2019s no one else like you in the world. I love you more than anything, and more than anyone."
+    }
+  ],
+
+  reasons: [
+    "The way you laugh at your own jokes before you even finish telling them.",
+    "How you save the last bite of anything for me, without ever being asked.",
+    "The playlists you make for moods I didn't know I was in.",
+    "Your ridiculous, wonderful morning hair.",
+    "The quiet kindness you show to everyone you meet, without even trying.",
+    "How you remember the small things everyone else forgets.",
+    "The songs you sing off-key when you think no one's listening.",
+    "That you still get excited to tell me about your day.",
+    "How ordinary rooms feel different because you're standing in them."
+  ],
+
+  gallery: [
+    "That trip we almost cancelled",
+    "Our first apartment",
+    "A rainy Sunday, doing nothing",
+    "The day everything became official",
+    "Pancakes, most Sundays",
+    "Just because"
+  ],
+
+  letter: [
+    "I've rewritten this more times than I'll admit, because nothing on this page ever felt like enough. So instead of trying to say everything, I'll just say this.",
+    "You make ordinary days feel worth remembering. The ones where nothing much happens — we cook, we argue about the remote, we fall asleep before the film ends — those are the days I think about most.",
+    "I don't know how to properly thank you for choosing me, in the small ways and the big ones, over and over. So I built you this instead. It isn't much. But it's made entirely out of how much I love you.",
+    "Giving you a surprise is so hard for me — if you ask what I'm doing, my heart won't let me lie to you. And if I say nothing at all, I know it puts you in a mood. \u{1F614}",
+    "Here's to everything we haven't done yet."
+  ]
+};
+
+/* ---------- populate static text ---------- */
+document.getElementById('heroName').textContent = content.herName;
+document.getElementById('heroTagline').textContent = content.tagline;
+document.getElementById('signature').textContent = content.yourName;
+
+/* ---------- night sky ---------- */
+const sky = document.getElementById('sky');
+const STAR_COUNT = 90;
+for(let i=0;i<STAR_COUNT;i++){
+  const s = document.createElement('div');
+  s.className = 'star';
+  const size = Math.random()*2 + 1;
+  s.style.width = size+'px';
+  s.style.height = size+'px';
+  s.style.left = Math.random()*100+'%';
+  s.style.top = Math.random()*100+'%';
+  s.style.animationDelay = (Math.random()*4)+'s';
+  sky.appendChild(s);
+}
+const FIREFLY_COUNT = 14;
+for(let i=0;i<FIREFLY_COUNT;i++){
+  const f = document.createElement('div');
+  f.className = 'firefly';
+  f.style.left = Math.random()*100+'%';
+  f.style.top = 40 + Math.random()*55+'%';
+  f.style.setProperty('--dx', (Math.random()*80-40)+'px');
+  f.style.setProperty('--dy', (Math.random()*-60-20)+'px');
+  f.style.animationDuration = (6+Math.random()*6)+'s';
+  f.style.animationDelay = (Math.random()*6)+'s';
+  sky.appendChild(f);
+}
+
+/* ---------- live "time together" counter ---------- */
+const counterEl = document.getElementById('counter');
+const since = new Date(content.sinceDate+'T00:00:00');
+
+function updateCounter(){
+  const now = new Date();
+  if(isNaN(since.getTime()) || since > now){
+    counterEl.textContent = '';
+    return;
+  }
+  let years = now.getFullYear() - since.getFullYear();
+  let months = now.getMonth() - since.getMonth();
+  let days = now.getDate() - since.getDate();
+  if(days < 0){
+    months -= 1;
+    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+  if(months < 0){
+    years -= 1;
+    months += 12;
+  }
+  counterEl.innerHTML =
+    '<strong>'+years+'</strong> year'+(years!==1?'s':'')+', '+
+    '<strong>'+months+'</strong> month'+(months!==1?'s':'')+' and '+
+    '<strong>'+days+'</strong> day'+(days!==1?'s':'')+' of loving you.';
+}
+updateCounter();
+setInterval(updateCounter, 60*1000);
+
+/* ---------- timeline ---------- */
+const timelineEl = document.getElementById('timeline');
+content.timeline.forEach(item=>{
+  const div = document.createElement('div');
+  div.className = 't-item';
+  div.innerHTML =
+    '<span class="t-year">'+item.year+'</span>'+
+    '<h3 class="t-title">'+item.title+'</h3>'+
+    '<p class="t-text">'+item.text+'</p>';
+  timelineEl.appendChild(div);
+});
+
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('in-view');
+      io.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.25 });
+document.querySelectorAll('.t-item').forEach(el=>io.observe(el));
+
+/* ---------- reason card stack ---------- */
+const stackEl = document.getElementById('cardStack');
+const countEl = document.getElementById('reasonCount');
+let order = content.reasons.map((_,i)=>i);
+const ROTS = [-4,3,-2,4,-3];
+
+function renderStack(){
+  stackEl.innerHTML = '';
+  const visible = order.slice(0,5);
+  visible.forEach((reasonIndex, pos)=>{
+    const card = document.createElement('div');
+    card.className = 'r-card';
+    card.textContent = '“'+content.reasons[reasonIndex]+'”';
+    const depth = visible.length - 1 - pos;
+    card.style.zIndex = 10 - pos;
+    card.style.transform = 'translateY('+(pos*6)+'px) rotate('+(pos===0?0:ROTS[pos%ROTS.length])+'deg)';
+    card.style.opacity = pos < 3 ? 1 : 0;
+    if(pos===0){
+      card.addEventListener('click', cycle);
+    }
+    stackEl.appendChild(card);
+  });
+  countEl.textContent = (order[0]+1)+' of '+content.reasons.length;
+}
+
+function cycle(){
+  const first = order.shift();
+  order.push(first);
+  renderStack();
+}
+document.getElementById('nextReason').addEventListener('click', cycle);
+renderStack();
+
+/* ---------- gallery frames ---------- */
+const framesEl = document.getElementById('frames');
+const camIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.2"/></svg>';
+content.gallery.forEach(caption=>{
+  const div = document.createElement('div');
+  div.className = 'frame';
+  div.innerHTML = camIcon + '<span>'+caption+'</span>';
+  framesEl.appendChild(div);
+});
+
+/* ---------- letter ---------- */
+const letterCard = document.getElementById('letterCard');
+letterCard.innerHTML =
+  content.letter.map(p=>'<p>'+p+'</p>').join('') +
+  '<p class="letter-sign">Always,<br>'+content.yourName+'</p>';
+
+const sealBtn = document.getElementById('sealBtn');
+sealBtn.addEventListener('click', ()=>{
+  const isOpen = letterCard.classList.toggle('open');
+  sealBtn.setAttribute('aria-expanded', isOpen);
+  sealBtn.textContent = isOpen ? 'Close' : 'Open';
+});
+
+/* ---------- footer dates ---------- */
+function nextAnniversary(){
+  const now = new Date();
+  if(isNaN(since.getTime())) return null;
+  let next = new Date(now.getFullYear(), since.getMonth(), since.getDate());
+  if(next < now) next = new Date(now.getFullYear()+1, since.getMonth(), since.getDate());
+  const diffDays = Math.ceil((next-now)/(1000*60*60*24));
+  return diffDays;
+}
+const daysToGo = nextAnniversary();
+document.getElementById('anniversary').textContent = (daysToGo !== null)
+  ? daysToGo+' days until our next anniversary'
+  : '';
+
+/* ---------- snap the rest of the way to the bottom ---------- */
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(!prefersReducedMotion){
+  let bottomSnapped = false;
+  let scrollTicking = false;
+
+  function checkNearBottom(){
+    const scrollBottom = window.scrollY + window.innerHeight;
+    const pageHeight = document.documentElement.scrollHeight;
+    const nearBottomThreshold = pageHeight - 160;
+    const resetThreshold = pageHeight - 500;
+
+    if(!bottomSnapped && scrollBottom >= nearBottomThreshold){
+      bottomSnapped = true;
+      window.scrollTo({ top: pageHeight, behavior: 'smooth' });
+    } else if(bottomSnapped && scrollBottom < resetThreshold){
+      bottomSnapped = false;
+    }
+    scrollTicking = false;
+  }
+
+  window.addEventListener('scroll', ()=>{
+    if(!scrollTicking){
+      window.requestAnimationFrame(checkNearBottom);
+      scrollTicking = true;
+    }
+  }, { passive: true });
+}
+</script>
+</body>
+</html>
