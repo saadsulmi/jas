@@ -688,13 +688,17 @@ const content = {
   // Each entry can have a "src" (a photo URL, or a local filename sitting
   // next to this HTML file, e.g. "photos/kochi.jpg"). Leave src empty and
   // it'll show a placeholder frame with just the caption.
+  // "position" is optional too — a CSS object-position value (like
+  // "center 20%") for nudging which part of a photo shows when it gets
+  // cropped to fit its frame. Lower % shows more of the top of the photo,
+  // higher % shows more of the bottom.
   gallery: [
-    { caption: "That trip we almost cancelled", src: "./1000257229.jpg" },
-    { caption: "Our first date", src: "./1000209350.jpg" },
-    { caption: "A Boquet for my princess", src: "./1000212989.jpg" },
-    { caption: "The day everything became official", src: "./1000255439.png" },
-    { caption: "My pretty rowdy", src: "./1000243074.jpg" },
-    { caption: "Just because", src: "./1000254992.png" }
+    { caption: "That trip we almost cancelled", src: "./1000257229.jpg", position: "center" },
+    { caption: "Our first date", src: "./1000209350.jpg", position: "center 30%" },
+    { caption: "A Boquet for my princess", src: "./1000212989.jpg", position: "center" },
+    { caption: "The day everything became official", src: "./1000255439.png", position: "center" },
+    { caption: "My pretty rowdy", src: "./1000243074.jpg", position: "center" },
+    { caption: "Just because", src: "./1000254992.png", position: "center" }
   ],
 
   letter: [
@@ -821,7 +825,7 @@ function renderStack(){
   visible.forEach((reasonIndex, pos)=>{
     const card = document.createElement('div');
     card.className = 'r-card';
-    card.textContent = '“'+content.reasons[reasonIndex]+'”';
+    card.textContent = '\u201c'+content.reasons[reasonIndex]+'\u201d';
     const depth = visible.length - 1 - pos;
     card.style.zIndex = 10 - pos;
     card.style.transform = 'translateY('+(pos*6)+'px) rotate('+(pos===0?0:ROTS[pos%ROTS.length])+'deg)';
@@ -852,6 +856,7 @@ content.gallery.forEach(item=>{
     const img = document.createElement('img');
     img.src = item.src;
     img.alt = item.caption || '';
+    img.style.objectPosition = item.position || 'center';
     div.appendChild(img);
   }
   const span = document.createElement('span');
