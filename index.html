@@ -92,6 +92,7 @@
   @media (prefers-reduced-motion: no-preference){
     .star{ animation:twinkle 4s ease-in-out infinite; }
     .firefly{ animation-name:drift; animation-timing-function:ease-in-out; animation-iteration-count:infinite; }
+    .lantern{ animation:lantern-rise var(--dur, 9s) linear infinite; animation-delay:var(--delay, 0s); }
   }
 
   @keyframes twinkle{
@@ -439,10 +440,73 @@
 
   /* ---------- CLOSING ---------- */
   .closing{
-    background:var(--ink);
+    position:relative;
+    overflow:hidden;
+    min-height:380px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(180deg, var(--ink) 0%, #0c0f1e 100%);
     color:var(--paper-2);
     text-align:center;
     padding:5rem 1.5rem calc(4rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .lantern-field{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .lantern{
+    position:absolute;
+    bottom:-15%;
+    width:var(--w, 22px);
+    height:calc(var(--w, 22px) * 1.35);
+    background:radial-gradient(circle at 50% 38%, #fff3cc 0%, #f8b955 45%, #c97a2e 88%);
+    border-radius:40% 40% 38% 38% / 55% 55% 42% 42%;
+    box-shadow:0 0 10px 3px rgba(255,181,89,0.5), 0 0 26px 9px rgba(255,150,60,0.22);
+    opacity:0;
+  }
+
+  .lantern::before{
+    content:"";
+    position:absolute;
+    top:-3px;
+    left:50%;
+    transform:translateX(-50%);
+    width:55%;
+    height:3px;
+    background:rgba(60,34,16,0.55);
+    border-radius:2px;
+  }
+
+  .lantern::after{
+    content:"";
+    position:absolute;
+    bottom:-7px;
+    left:50%;
+    transform:translateX(-50%);
+    width:1.5px;
+    height:8px;
+    background:rgba(90,60,25,0.5);
+  }
+
+  @keyframes lantern-rise{
+    0%{ transform:translate(0,0) rotate(-3deg); opacity:0; }
+    6%{ opacity:0.95; }
+    30%{ transform:translate(9px, calc(-0.3 * var(--rise, 300px))) rotate(3deg); }
+    55%{ transform:translate(-7px, calc(-0.55 * var(--rise, 300px))) rotate(-3deg); }
+    80%{ transform:translate(6px, calc(-0.8 * var(--rise, 300px))) rotate(2deg); opacity:0.9; }
+    100%{ transform:translate(-4px, calc(-1 * var(--rise, 300px))) rotate(-2deg); opacity:0; }
+  }
+
+  .closing-content{
+    position:relative;
+    z-index:1;
   }
 
   .signature{
@@ -497,8 +561,11 @@
 </section>
 
 <footer class="closing">
-  <p class="signature" id="signature">[Your Name]</p>
-  <p class="anniversary" id="anniversary"></p>
+  <div class="lantern-field" id="lanternField" aria-hidden="true"></div>
+  <div class="closing-content">
+    <p class="signature" id="signature">[Your Name]</p>
+    <p class="anniversary" id="anniversary"></p>
+  </div>
 </footer>
 
 <script>
@@ -622,6 +689,25 @@ for(let i=0;i<FIREFLY_COUNT;i++){
   sky.appendChild(f);
 }
 
+/* ---------- rising lanterns in the footer ---------- */
+const lanternField = document.getElementById('lanternField');
+if(lanternField){
+  const LANTERN_COUNT = 10;
+  const fieldHeight = lanternField.offsetHeight || 380;
+  for(let i=0;i<LANTERN_COUNT;i++){
+    const l = document.createElement('div');
+    l.className = 'lantern';
+    const size = 16 + Math.random()*16;
+    const rise = fieldHeight + 60 + Math.random()*60;
+    l.style.setProperty('--w', size+'px');
+    l.style.setProperty('--rise', rise+'px');
+    l.style.setProperty('--dur', (8 + Math.random()*6)+'s');
+    l.style.setProperty('--delay', (-(Math.random()*14))+'s');
+    l.style.left = (4 + Math.random()*88)+'%';
+    lanternField.appendChild(l);
+  }
+}
+
 /* ---------- live "time together" counter ---------- */
 const counterEl = document.getElementById('counter');
 const since = new Date(content.sinceDate+'T00:00:00');
@@ -741,36 +827,58 @@ function nextAnniversary(){
 }
 const daysToGo = nextAnniversary();
 document.getElementById('anniversary').textContent = (daysToGo !== null)
-  ? daysToGo+' days until our next anniversary'
+  ? daysToGo+' days until our first anniversary'
   : '';
 
-/* ---------- snap the rest of the way to the bottom ---------- */
+/* ---------- gentle auto-scroll through the page, resumes after a pause ---------- */
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 if(!prefersReducedMotion){
-  let bottomSnapped = false;
-  let scrollTicking = false;
+  let autoScrollActive = false;
+  let lastTimestamp = null;
+  let resumeTimer = null;
+  const SCROLL_SPEED = 34;   // px per second — slow and readable
+  const RESUME_DELAY = 2500; // ms of stillness before auto-scroll picks back up
 
-  function checkNearBottom(){
-    const scrollBottom = window.scrollY + window.innerHeight;
-    const pageHeight = document.documentElement.scrollHeight;
-    const nearBottomThreshold = pageHeight - 160;
-    const resetThreshold = pageHeight - 500;
-
-    if(!bottomSnapped && scrollBottom >= nearBottomThreshold){
-      bottomSnapped = true;
-      window.scrollTo({ top: pageHeight, behavior: 'smooth' });
-    } else if(bottomSnapped && scrollBottom < resetThreshold){
-      bottomSnapped = false;
-    }
-    scrollTicking = false;
+  function isAtBottom(){
+    return (window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 2;
   }
 
-  window.addEventListener('scroll', ()=>{
-    if(!scrollTicking){
-      window.requestAnimationFrame(checkNearBottom);
-      scrollTicking = true;
+  function autoScrollStep(timestamp){
+    if(!autoScrollActive) return;
+    if(lastTimestamp === null) lastTimestamp = timestamp;
+    const delta = timestamp - lastTimestamp;
+    lastTimestamp = timestamp;
+
+    window.scrollBy(0, (SCROLL_SPEED * delta) / 1000);
+
+    if(isAtBottom()){
+      autoScrollActive = false;
+      return;
     }
-  }, { passive: true });
+    requestAnimationFrame(autoScrollStep);
+  }
+
+  function startAutoScroll(){
+    if(autoScrollActive || isAtBottom()) return;
+    autoScrollActive = true;
+    lastTimestamp = null;
+    requestAnimationFrame(autoScrollStep);
+  }
+
+  // Any real interaction pauses it, then it quietly picks back up
+  // once things have been still for a moment.
+  function handleInteraction(){
+    autoScrollActive = false;
+    if(resumeTimer) clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(startAutoScroll, RESUME_DELAY);
+  }
+
+  ['wheel','touchstart','touchmove','keydown','mousedown'].forEach(evt=>{
+    window.addEventListener(evt, handleInteraction, { passive:true });
+  });
+
+  // Wait a few seconds so there's time to read the hero first.
+  setTimeout(startAutoScroll, 3500);
 }
 </script>
 </body>
